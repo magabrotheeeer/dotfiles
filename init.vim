@@ -27,6 +27,10 @@ set signcolumn=yes
 highlight LineNr guifg=Yellow ctermfg=Yellow
 highlight CursorLineNr guifg=Purple ctermfg=magenta
 call plug#begin('~/.config/nvim/plugged')
+	Plug 'nvim-treesitter/nvim-treesitter'
+	Plug 'akinsho/toggleterm.nvim'
+	" git rows diffs
+	Plug 'lewis6991/gitsigns.nvim'
 	" git
 	Plug 'Xuyuanp/nerdtree-git-plugin'
     Plug 'hrsh7th/vim-vsnip'
@@ -218,3 +222,80 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
     \ 'Clean'     : '✔︎',
     \ 'Unknown'   : '?'
     \ }
+" git rows
+lua << EOF
+require('gitsigns').setup({
+  signs = {
+    add          = { text = '│' },  -- Жёлтый (добавления)
+    change       = { text = '│' },  -- Синий (изменения)
+    delete       = { text = '_' },  -- Красный (удаления)
+    topdelete    = { text = '‾' },
+    changedelete = { text = '~' },
+  },
+  current_line_blame = true,
+  current_line_blame_opts = {
+    delay = 1000,
+  },
+  on_attach = function(bufnr)
+    vim.keymap.set('n', ']c', "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'", { expr = true })
+    vim.keymap.set('n', '[c', "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'", { expr = true })
+  end,
+})
+EOF
+
+" Цвета для Git-изменений (ваша палитра)
+highlight GitSignsAdd    guifg=#ffff00 ctermfg=3  " Жёлтый для добавлений
+highlight GitSignsChange guifg=#0000ff ctermfg=4  " Синий для изменений
+highlight GitSignsDelete guifg=#ff0000 ctermfg=1  " Красный для удалений
+
+" Дополнительные стили (опционально)
+highlight GitSignsAddNr    guifg=#ffff00 ctermfg=3  " Цвет числа добавлений
+highlight GitSignsChangeNr guifg=#0000ff ctermfg=4  " Цвет числа изменений
+highlight GitSignsDeleteNr guifg=#ff0000 ctermfg=1  " Цвет числа удалений
+
+" встроенный терминал 
+lua << EOF
+require('toggleterm').setup({
+  -- Открывать/закрывать по Ctrl+`
+  open_mapping = [[<c-`>]],
+  -- Терминал снизу (горизонтальный) на всю ширину
+  direction = 'horizontal',
+  -- Размер терминала (в строках)
+  size = 15,
+  -- Автоматически убирать номер строки и т.д.
+  shade_terminals = true,
+  -- Стиль границы (можно отключить)
+  float_opts = {
+    border = 'none',
+  },
+  -- Закрывать терминал при выходе из insert-режима
+  persist_mode = false,
+})
+EOF
+
+
+" автоформатирование go
+lua <<EOF
+-- Сначала настройте treesitter
+require('nvim-treesitter.configs').setup({
+  ensure_installed = {'go'},  -- Парсер для Go
+    highlight = {
+		    enable = true,
+			  }
+	})
+
+-- Затем настройте go.nvim
+require('go').setup({
+  gofmt = 'gofumpt',
+    goimports = 'goimports',
+	  lsp_cfg = true,
+	    lsp_on_attach = function(client, bufnr)
+		    vim.api.nvim_create_autocmd('BufWritePre', {
+				      buffer = bufnr,
+					        callback = function()
+							        require('go.format').goimports()
+									      end
+										      })
+			  end
+})
+EOF
