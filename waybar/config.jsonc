@@ -1,0 +1,120 @@
+{
+    "position": "top",
+    "layer": "top",
+    "output": "eDP-1",
+    "height": 16,
+    "margin-top": 0,
+    "margin-bottom": 0,
+    "margin-left": 0,
+    "margin-right": 0,
+    "modules-left": ["hyprland/workspaces", "hyprland/window"],
+    "modules-center": ["custom/clock"],
+    "modules-right": ["network", "tray", "battery", "pulseaudio", "backlight", "hyprland/language", "custom/poff"],
+    // Modules configuration
+
+    "tray": {
+        "icon-size": 15,
+        "tooltip": false,
+        "spacing": 10
+    },
+
+    "hyprland/language": {
+        "format": " {} ",
+        "format-en": "󰰎  us",
+        "format-ru": "󰰍  ru"
+    },
+
+    "dwl/tags": {
+        "num-tags": 9
+    },
+
+    "custom/poff": {
+        "on-click": "/home/papa/.config/waybar/scripts/wofi-power.sh",
+        "format": "{icon}",
+        "format-icons": [" ⏻ "]
+    },
+
+    "custom/clock": {
+        "exec": "date +'%H:%M:%S  %a, %b %d'",
+        "interval": 1,
+        "format": " {}",
+        "align": 1,
+        "tooltip": false
+    },	
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+    "hyprland/window": {
+        "format": "{}"
+    },
+
+    "battery": {
+        "states": {
+            "good": 95,
+            "warning": 30,
+            "critical": 15
+        },
+        "format":"{icon}  {capacity}%",
+        "format-charging": "{capacity}%  ",
+        "format-plugged": "{capacity}%  ",
+        "format-alt": "{icon} {time}",
+        // "format-good": "", // An empty format will hide the module
+        // "format-full": "",
+        "format-icons": ["   ", "   ", "   ", "   ", "   "]
+    },
+
+    "backlight": {
+        "device": "intel_backlight",
+        "tooltip": false,
+        "format": "{icon} {percent}%",
+        "format-icons": ["", "󰪞", "󰪟", "󰪠", "󰪡", "󰪢", "󰪣", "󰪤", "󰪥"],
+        "on-click-right": "pkill -x gammastep; gammastep -O 4500K",
+        "on-click-middle": "pkill -x gammastep",
+        "on-click": "light -S 20 && light -G && echo 20 > .wob.sock",
+        "on-scroll-up": "light -A 1 && light -G | cut -d'.' -f1 > /home/babkock/.wob.sock",
+        "on-scroll-down": "light -U 1 && light -G | cut -d'.' -f1 > /home/babkock/.wob.sock",
+    },
+    "pulseaudio": {
+        "format": "{icon} <span style=\"italic\">{volume}%</span> {format_source}",
+        "format-bluetooth": "{icon}  <span style=\"italic\">{volume}%</span>",
+        "format-bluetooth-muted": "  {volume}%",
+        "format-muted": " {volume}%",
+        "format-source": " {volume}%",
+        "format-source-muted": "",
+        "tooltip": true,
+        "tooltip-format": "{desc}",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click-right": "pavucontrol",
+        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > /home/babkock/.wob.sock",
+        "on-scroll-up": "pactl set-sink-volume @DEFAULT_SINK@ +2% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > /home/babkock/.wob.sock",
+        "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -2% && pactl get-sink-volume @DEFAULT_SINK@ | head -n 1 | awk '{print substr($5, 1, length($5)-1)}' > /home/babkock/.wob.sock",
+    }, "network": {
+        // "interface": "wlp2*", // (Optional) To force the use of this interface
+        "format-wifi": "{essid} ({signalStrength}%) ",
+        "format-ethernet": "{ipaddr}/{cidr} ",
+        "tooltip-format": "{ifname} via {gwaddr} ",
+        "format-linked": "{ifname} (No IP) ",
+        "format-disconnected": "Disconnected ⚠",
+        "format-alt": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "disk": {
+        "path": "/",
+        "interval": 1,
+        "format": " <span style=\"italic\">{free}</span>",
+        "format-alt": " {used}",
+        "tooltip": true,
+        "tooltip-format": "{percentageUsed}% of {total}"
+    }
+}
+
+
