@@ -40,6 +40,7 @@ set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNO
 
 " Plugins
 call plug#begin('~/.config/nvim/plugged')
+Plug 'sphamba/smear-cursor.nvim'
 " LSP and completion
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-cmp'
@@ -241,5 +242,44 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 		    callback = function()
 			        vim.lsp.buf.format({ async = false })
 					    end,
+})
+EOF
+" ... остальной конфиг ...
+
+" Lua-часть (должна быть после plug#end())
+lua <<EOF
+-- Бинд для Code Actions (лампочки)
+vim.keymap.set('n', '<Leader>ca', vim.lsp.buf.code_action, { desc = 'Code Action' })
+EOF
+
+lua <<EOF
+-- Добавьте в on_attach функцию в lspconfig
+local on_attach = function(client, bufnr)
+  -- Подсветка ссылок при наведении (включая объявления)
+  vim.api.nvim_create_autocmd({'CursorHold', 'CursorHoldI'}, {
+    buffer = bufnr,
+    callback = function()
+      vim.lsp.buf.document_highlight()
+    end
+  })
+
+  -- Сброс подсветки при перемещении курсора
+  vim.api.nvim_create_autocmd({'CursorMoved', 'CursorMovedI'}, {
+    buffer = bunfur,
+    callback = function()
+      vim.lsp.buf.clear_references()
+    end
+  })
+end
+
+-- Настройка LSP сервера (пример для Go)
+require('lspconfig').gopls.setup({
+  on_attach = on_attach
+})
+EOF
+
+lua << EOF
+require('smear_cursor').setup({
+  cursor_color = '#d3cdc3',
 })
 EOF
