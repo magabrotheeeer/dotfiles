@@ -34,7 +34,6 @@ set background=dark
 highlight Cursorline cterm=bold
 highlight LineNr guifg=Yellow ctermfg=Yellow
 highlight CursorLineNr guifg=Purple ctermfg=magenta
-
 " Keyboard layout
 set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
 
@@ -61,10 +60,12 @@ Plug 'lewis6991/gitsigns.nvim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
+
 " Language specific
 Plug 'ray-x/go.nvim'
 Plug 'ray-x/guihua.lua'
 Plug 'cdelledonne/vim-cmake'
+Plug 'mfussenegger/nvim-lint'
 
 " Terminal
 Plug 'akinsho/toggleterm.nvim'
@@ -278,8 +279,22 @@ require('lspconfig').gopls.setup({
 })
 EOF
 
+" курсор
 lua << EOF
 require('smear_cursor').setup({
   cursor_color = '#d3cdc3',
 })
 EOF
+
+" подсветка линтера
+lua << EOF
+require('lint').linters_by_ft = {
+  go = {'golangcilint'}
+}
+vim.api.nvim_create_autocmd({'BufWritePost'}, {
+  callback = function()
+    require('lint').try_lint()
+  end,
+})
+EOF
+
