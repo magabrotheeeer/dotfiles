@@ -23,23 +23,33 @@ map("n", "<A-[>", ":resize -2<CR>", opts)
 map("n", "<S-l>", "<cmd>BufferLineCycleNext<CR>", opts)
 map("n", "<S-h>", "<cmd>BufferLineCyclePrev<CR>", opts)
 
--- Стандартный Vim:
--- gt  — следующий таб
--- gT  — предыдущий таб
--- :tabnew          — пустая вкладка
--- :tabe filename   — открыть файл в новой вкладке
-
 ----------------------------------------------------------------
 -- ТЕРМИНАЛ (toggleterm)
 ----------------------------------------------------------------
 -- Открыть/закрыть терминал
-map("n", "<C-t>", "<cmd>ToggleTerm<CR>", opts)
+map("n", "<C-p>", "<cmd>ToggleTerm<CR>", opts)
 -- Из терминала по Ctrl+t выходим и закрываем
-map("t", "<C-t>", "<C-\\><C-n><cmd>ToggleTerm<CR>", opts)
+map("t", "<C-p>", "<C-\\><C-n><cmd>ToggleTerm<CR>", opts)
 
 -- Навигация по окнам из терминала
 map("t", "<C-h>", "<C-\\><C-n><C-w>h", opts)
 map("t", "<C-j>", "<C-\\><C-n><C-w>j", opts)
 map("t", "<C-k>", "<C-\\><C-n><C-w>k", opts)
 map("t", "<C-l>", "<C-\\><C-n><C-w>l", opts)
+
+----------------------------------------------------------------
+-- Навигация по диагностике (ошибкам/варнингам)
+----------------------------------------------------------------
+local map = vim.keymap.set
+local opts = { noremap = true, silent = true }
+
+-- Следующая / предыдущая проблема
+map("n", "]d", vim.diagnostic.goto_next, opts)
+map("n", "[d", vim.diagnostic.goto_prev, opts)
+
+-- Показать окно с текстом ошибки под курсором
+map("n", "gl", vim.diagnostic.open_float, opts)
+
+-- Список всех диагностик в текущем буфере в quickfix-окне
+map("n", "<leader>d", vim.diagnostic.setloclist, opts)
 

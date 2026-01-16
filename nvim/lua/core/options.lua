@@ -9,7 +9,12 @@ o.relativenumber = true
 o.expandtab = true
 o.shiftwidth = 4
 o.tabstop = 4
-
+o.guicursor = table.concat({
+  "n-v-c:block",                     -- нормальный блок в normal/visual/command
+  "i-ci:block-blinkon200-blinkoff200", -- в insert блок мигает
+  "r-cr:hor20",                      -- в replace режимах — горизонтальная линия
+  "o:hor50",                         -- в operator-pending тоже линия
+}, ",")
 o.termguicolors = true
 o.background = "dark"
 o.cursorline = true
@@ -33,4 +38,3 @@ o.hidden = true
 
 -- Клипборд Windows
 o.clipboard = "unnamedplus"
-
